@@ -123,4 +123,4 @@ sources:
 dependencies:
 	@cat $(DEPS)
 
-.PHONY: all clean cleandep fclean re headers sources dependencies
+.PHONY: all clean cleandep cleanlibs fclean fcleanlibs re headers sources dependencies
