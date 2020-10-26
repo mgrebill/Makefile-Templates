@@ -103,8 +103,14 @@ clean:
 cleandep:
 	rm -rf $(DEPSPATH)
 
+cleanlibs:
+	make clean -C $(dir $(LIBS))
+
 fclean: clean cleandep
 	rm -f $(NAME)
+
+fcleanlibs:
+	make fclean -C $(dir $(LIBS))
 
 re: fclean all
 
