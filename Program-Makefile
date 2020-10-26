@@ -1,0 +1,95 @@
+#Makefile template for C programs projects.
+#Copy-Paste from line 6 to EOF.
+#If your program needs libraries to compile, see the Program-Dep-Makefile.
+
+
+# Name
+NAME =			#Replace this comment with the name of your project.
+
+
+# Compiler
+CC = 			gcc
+
+CFLAGS =		-Wall
+CFLAGS +=		-Wextra
+CFLAGS +=		-Werror
+
+MFLAGS =		-MMD
+MFLAGS +=		-MF
+
+
+# Header
+HEADERSFILES =	$(addsuffix .h, $(NAME))
+
+HEADERSDIR =	includes
+
+HEADERSPATH =	$(addprefix ./, $(HEADERSDIR))
+
+HEADERS =		$(addprefix $(HEADERSPATH)/, $(HEADERSFILES))
+
+
+# Sources
+SRCSFILES =		#Replace this comment with your .c sources.
+
+SRCSDIR =		src
+
+SRCSPATH =		$(addprefix ./, $(SRCSDIR))
+
+SRCS =			$(addprefix $(SRCSPATH)/, $(SRCSFILES))
+
+
+# Objects
+OBJSFILES =		$(SRCSFILES:.c=.o)
+
+OBJSDIR =		obj
+
+OBJSPATH =		$(addprefix ./, $(OBJSDIR))
+
+OBJS =			$(addprefix $(OBJSPATH)/, $(OBJSFILES))
+
+
+# Dependencies
+DEPSFILES =		$(OBJSFILES:.o=.d)
+
+DEPSDIR =		dep
+
+DEPSPATH =		$(addprefix ./, $(DEPSDIR))
+
+DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
+
+
+# Rules
+all: $(OBJSPATH) $(DEPSPATH) $(NAME)
+
+$(OBJSPATH) $(DEPSPATH):
+	mkdir $@
+
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(OBJS): $(SRCS)
+	$(CC) $(CFLAGS) $(MFLAGS) $(addprefix $(DEPSPATH)/, $(notdir $(@:.o=.d))) -I $(HEADERSPATH) -o $@ -c $<
+
+-include $(DEPS)
+
+clean:
+	rm -rf $(OBJSPATH)
+
+cleandep:
+	rm -rf $(DEPSPATH)
+
+fclean: clean cleandep
+	rm -f $(NAME)
+
+re: fclean all
+
+headers:
+	@ls $(HEADERSPATH)
+
+sources:
+	@ls $(SRCSPATH)
+
+dependencies:
+	@cat $(DEPS)
+
+.PHONY: all clean cleandep fclean re headers sources dependencies

@@ -1,0 +1,129 @@
+#Makefile template for C static libraries depending on other libraries projects.
+#Copy-Paste from line 6 to EOF.
+#If your library does not need another library to compile, see the Static-Library-Makefile.
+
+
+# Name
+NAME =			#Replace this comment with the name of your project.
+
+LIB =			$(addsuffix .a, $(NAME))
+
+
+# Compiler
+CC = 			gcc
+
+CFLAGS =		-Wall
+CFLAGS +=		-Wextra
+CFLAGS +=		-Werror
+
+MFLAGS =		-MMD
+MFLAGS +=		-MF
+
+
+# Archiver
+AR =			ar
+
+AFLAGS =		-r
+AFLAGS +=		-c
+
+
+# Header
+HEADERSFILES =	$(addsuffix .h, $(NAME))
+
+HEADERSDIR =	includes
+
+HEADERSPATH =	$(addprefix ./, $(HEADERSDIR))
+
+HEADERS =		$(addprefix $(HEADERSPATH)/, $(HEADERSFILES))
+
+
+# Lib1
+LIB1NAME =		#Replace this comment with the name of the first lib to include in your project.
+
+LIB1FILE =		$(addsuffix .a, $(LIB1NAME))
+
+LIB1HEADER =	$(addsuffix .h, $(LIB1NAME))
+
+LIB1DIR =		$(LIB1NAME)
+
+LIB1PATH =		$(addprefix ../, $(LIB1DIR))
+
+LIB1 =			$(addprefix $(LIB1PATH)/, $(LIB1FILE))
+
+
+#Copy-paste Lib1 template with Lib2, Lib3, etc...
+#And add $(LIBX) to the LIBS list below for each lib added.
+
+
+# Libs
+LIBS =			$(LIB1)
+
+
+# Sources
+SRCSFILES =		#Replace this comment with your .c sources.
+
+SRCSDIR =		src
+
+SRCSPATH =		$(addprefix ./, $(SRCSDIR))
+
+SRCS =			$(addprefix $(SRCSPATH)/, $(SRCSFILES))
+
+
+# Objects
+OBJSFILES =		$(SRCSFILES:.c=.o)
+
+OBJSDIR =		obj
+
+OBJSPATH =		$(addprefix ./, $(OBJSDIR))
+
+OBJS =			$(addprefix $(OBJSPATH)/, $(OBJSFILES))
+
+
+# Dependencies
+DEPSFILES =		$(OBJSFILES:.o=.d)
+
+DEPSDIR =		dep
+
+DEPSPATH =		$(addprefix ./, $(DEPSDIR))
+
+DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
+
+
+# Rules
+all: $(OBJSPATH) $(DEPSPATH) $(LIB)
+
+$(OBJSPATH) $(DEPSPATH):
+	mkdir $@
+
+$(LIB): $(LIBS) $(OBJS)
+	$(AR) $(AFLAGS) $@ $^
+
+$(LIBS):
+	make -C $(dir $@)
+
+$(OBJS): $(SRCS)
+	$(CC) $(CFLAGS) $(MFLAGS) $(addprefix $(DEPSPATH)/, $(notdir $(@:.o=.d))) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
+
+-include $(DEPS)
+
+clean:
+	rm -rf $(OBJSPATH)
+
+cleandep:
+	rm -rf $(DEPSPATH)
+
+fclean: clean cleandep
+	rm -f $(LIB)
+
+re: fclean all
+
+headers:
+	@ls $(HEADERSPATH)
+
+sources:
+	@ls $(SRCSPATH)
+
+dependencies:
+	@cat $(DEPS)
+
+.PHONY: all clean cleandep fclean re headers sources dependencies
