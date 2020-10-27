@@ -90,13 +90,13 @@ DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 
 
 # Rules
-all: $(OBJSPATH) $(DEPSPATH) $(LIB)
+all: $(LIB)
+
+$(LIB): $(OBJSPATH) $(DEPSPATH) $(LIBS) $(OBJS)
+	$(AR) $(AFLAGS) $@ $^
 
 $(OBJSPATH) $(DEPSPATH):
 	mkdir $@
-
-$(LIB): $(LIBS) $(OBJS)
-	$(AR) $(AFLAGS) $@ $^
 
 $(LIBS):
 	make -C $(dir $@)

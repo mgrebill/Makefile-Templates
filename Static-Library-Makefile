@@ -68,13 +68,13 @@ DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 
 
 # Rules
-all: $(OBJSPATH) $(DEPSPATH) $(LIB)
+all: $(LIB)
+
+$(LIB): $(OBJSPATH) $(DEPSPATH) $(OBJS)
+	$(AR) $(AFLAGS) $@ $^
 
 $(OBJSPATH) $(DEPSPATH):
 	mkdir $@
-
-$(LIB): $(OBJS)
-	$(AR) $(AFLAGS) $@ $^
 
 $(OBJS): $(SRCS)
 	$(CC) $(CFLAGS) $(MFLAGS) $(addprefix $(DEPSPATH)/, $(notdir $(@:.o=.d))) -I $(HEADERSPATH) -o $@ -c $<
