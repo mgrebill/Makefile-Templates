@@ -28,6 +28,12 @@ HEADERSPATH =	$(addprefix ./, $(HEADERSDIR))
 HEADERS =		$(addprefix $(HEADERSPATH)/, $(HEADERSFILES))
 
 
+# Libs
+LIBSDIR =		lib
+
+LIBSPATH =		$(addprefix ./, $(LIBSDIR))
+
+
 # Lib1
 LIB1NAME =		#Replace this comment with the name of the first lib to include in your project.
 
@@ -37,7 +43,7 @@ LIB1HEADER =	$(addsuffix .h, $(LIB1NAME))
 
 LIB1DIR =		$(LIB1NAME)
 
-LIB1PATH =		$(addprefix ./libraries/, $(LIB1DIR))
+LIB1PATH =		$(addprefix $(LIBSPATH), $(LIB1DIR))
 
 LIB1 =			$(addprefix $(LIB1PATH)/, $(LIB1FILE))
 
@@ -46,7 +52,6 @@ LIB1 =			$(addprefix $(LIB1PATH)/, $(LIB1FILE))
 #And add $(LIB[X]) to the LIBS list below for each lib added.
 
 
-# Libs
 LIBS =			$(LIB1)
 
 
