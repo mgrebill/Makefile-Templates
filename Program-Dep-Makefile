@@ -14,8 +14,8 @@ CFLAGS =		-Wall
 CFLAGS +=		-Wextra
 CFLAGS +=		-Werror
 
-MFLAGS =		-MMD
-MFLAGS +=		-MF
+CMFLAGS =		-MMD
+CMFLAGS +=		-MF
 
 
 # Header
@@ -98,7 +98,7 @@ $(LIBS):
 	make -C $(dir $@)
 
 $(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(MFLAGS) $(addprefix $(DEPSPATH)/, $(notdir $(@:.o=.d))) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(notdir $(@:.o=.d))) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
 
 -include $(DEPS)
 
