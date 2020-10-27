@@ -43,7 +43,7 @@ LIB1 =			$(addprefix $(LIB1PATH)/, $(LIB1FILE))
 
 
 #Copy-paste Lib1 template with Lib2, Lib3, etc...
-#And add $(LIBX) to the LIBS list below for each lib added.
+#And add $(LIB[X]) to the LIBS list below for each lib added.
 
 
 # Libs
@@ -114,6 +114,9 @@ fcleanlibs:
 
 re: fclean all
 
+relibs:
+	make re -C $(dir $(LIBS))
+
 headers:
 	@ls $(HEADERSPATH)
 
@@ -123,4 +126,4 @@ sources:
 dependencies:
 	@cat $(DEPS)
 
-.PHONY: all clean cleandep cleanlibs fclean fcleanlibs re headers sources dependencies
+.PHONY: all clean cleandep cleanlibs fclean fcleanlibs re relibs headers sources dependencies
