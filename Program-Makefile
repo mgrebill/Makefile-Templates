@@ -62,13 +62,13 @@ DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 all: $(NAME)
 
 $(NAME): $(OBJSPATH) $(DEPSPATH) $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $(filter %.o, $^)
 
 $(OBJSPATH) $(DEPSPATH):
 	mkdir $@
 
 $(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(notdir $(@:.o=.d))) -I $(HEADERSPATH) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(@F:.o=.d)) -I $(HEADERSPATH) -o $@ -c $<
 
 -include $(DEPS)
 

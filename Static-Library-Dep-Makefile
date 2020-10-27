@@ -93,16 +93,16 @@ DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 all: $(LIB)
 
 $(LIB): $(OBJSPATH) $(DEPSPATH) $(LIBS) $(OBJS)
-	$(AR) $(AFLAGS) $@ $^
+	$(AR) $(AFLAGS) $@ $(filter %.a, $^) $(filter %.o, $^)
 
 $(OBJSPATH) $(DEPSPATH):
 	mkdir $@
 
 $(LIBS):
-	make -C $(dir $@)
+	make -C $(@D)
 
 $(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(notdir $(@:.o=.d))) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
+	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(@F:.o=.d)) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
 
 -include $(DEPS)
 
