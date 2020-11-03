@@ -19,11 +19,11 @@ CMFLAGS +=		-MF
 
 
 # Header
-HEADERSFILES =	$(addsuffix .h, $(NAME))
+HEADERSFILES =	$(NAME).h
 
 HEADERSDIR =	includes
 
-HEADERSPATH =	$(addprefix ./, $(HEADERSDIR))
+HEADERSPATH =	./$(HEADERSDIR)
 
 HEADERS =		$(addprefix $(HEADERSPATH)/, $(HEADERSFILES))
 
@@ -37,13 +37,13 @@ LIBSPATH =		$(addprefix ./, $(LIBSDIR))
 # Lib1
 LIB1NAME =		#Replace this comment with the name of the first lib to include in your project.
 
-LIB1FILE =		$(addsuffix .a, $(LIB1NAME))
+LIB1FILE =		$(LIB1NAME).a
 
-LIB1HEADER =	$(addsuffix .h, $(LIB1NAME))
+LIB1HEADER =	$(LIB1NAME).h
 
 LIB1DIR =		$(LIB1NAME)
 
-LIB1PATH =		$(addprefix $(LIBSPATH)/, $(LIB1DIR))
+LIB1PATH =		$(LIBSPATH)/$(LIB1DIR)
 
 LIB1 =			$(addprefix $(LIB1PATH)/, $(LIB1FILE))
 
@@ -60,7 +60,7 @@ SRCSFILES =		#Replace this comment with your .c sources.
 
 SRCSDIR =		src
 
-SRCSPATH =		$(addprefix ./, $(SRCSDIR))
+SRCSPATH =		./$(SRCSDIR)
 
 SRCS =			$(addprefix $(SRCSPATH)/, $(SRCSFILES))
 
@@ -70,7 +70,7 @@ OBJSFILES =		$(SRCSFILES:.c=.o)
 
 OBJSDIR =		obj
 
-OBJSPATH =		$(addprefix ./, $(OBJSDIR))
+OBJSPATH =		./$(OBJSDIR)
 
 OBJS =			$(addprefix $(OBJSPATH)/, $(OBJSFILES))
 
@@ -80,7 +80,7 @@ DEPSFILES =		$(OBJSFILES:.o=.d)
 
 DEPSDIR =		dep
 
-DEPSPATH =		$(addprefix ./, $(DEPSDIR))
+DEPSPATH =		./$(DEPSDIR)
 
 DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 
@@ -89,7 +89,7 @@ DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 all: $(NAME)
 
 $(NAME): $(OBJSPATH) $(DEPSPATH) $(LIBS) $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(filter %.o, $^)
+	$(CC) $(CFLAGS) -o $@ $(filter %.a, $^) $(filter %.o, $^)
 
 $(OBJSPATH) $(DEPSPATH):
 	mkdir $@
@@ -97,8 +97,8 @@ $(OBJSPATH) $(DEPSPATH):
 $(LIBS):
 	make -C $(@D)
 
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(@F:.o=.d)) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
+$(OBJSPATH)/%.o: $(SRCSPATH)/%.c
+	$(CC) $(CFLAGS) $(CMFLAGS) $(DEPSPATH)/$(@F:.o=.d) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
 
 -include $(DEPS)
 
@@ -109,18 +109,18 @@ cleandep:
 	rm -rf $(DEPSPATH)
 
 cleanlibs:
-	make clean -C $(dir $(LIBS))
+	$(addprefix make clean -C , $(addsuffix ;, $(dir $(LIBS))))
 
 fclean: clean cleandep
 	rm -f $(NAME)
 
 fcleanlibs:
-	make fclean -C $(dir $(LIBS))
+	$(addprefix make fclean -C , $(addsuffix ;, $(dir $(LIBS))))
 
 re: fclean all
 
 relibs:
-	make re -C $(dir $(LIBS))
+	$(addprefix make re -C , $(addsuffix ;, $(dir $(LIBS))))
 
 headers:
 	@ls $(HEADERSPATH)
@@ -128,7 +128,10 @@ headers:
 sources:
 	@ls $(SRCSPATH)
 
+libs:
+	@ls $(LIBSPATH)
+
 dependencies:
 	@cat $(DEPS)
 
-.PHONY: all clean cleandep cleanlibs fclean fcleanlibs re relibs headers sources dependencies
+.PHONY: all clean cleandep cleanlibs fclean fcleanlibs re relibs headers sources libs dependencies

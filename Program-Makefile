@@ -19,11 +19,11 @@ CMFLAGS +=		-MF
 
 
 # Header
-HEADERSFILES =	$(addsuffix .h, $(NAME))
+HEADERSFILES =	$(NAME).h
 
 HEADERSDIR =	includes
 
-HEADERSPATH =	$(addprefix ./, $(HEADERSDIR))
+HEADERSPATH =	./$(HEADERSDIR)
 
 HEADERS =		$(addprefix $(HEADERSPATH)/, $(HEADERSFILES))
 
@@ -33,7 +33,7 @@ SRCSFILES =		#Replace this comment with your .c sources.
 
 SRCSDIR =		src
 
-SRCSPATH =		$(addprefix ./, $(SRCSDIR))
+SRCSPATH =		./$(SRCSDIR)
 
 SRCS =			$(addprefix $(SRCSPATH)/, $(SRCSFILES))
 
@@ -43,7 +43,7 @@ OBJSFILES =		$(SRCSFILES:.c=.o)
 
 OBJSDIR =		obj
 
-OBJSPATH =		$(addprefix ./, $(OBJSDIR))
+OBJSPATH =		./$(OBJSDIR)
 
 OBJS =			$(addprefix $(OBJSPATH)/, $(OBJSFILES))
 
@@ -53,7 +53,7 @@ DEPSFILES =		$(OBJSFILES:.o=.d)
 
 DEPSDIR =		dep
 
-DEPSPATH =		$(addprefix ./, $(DEPSDIR))
+DEPSPATH =		./$(DEPSDIR)
 
 DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 
@@ -67,8 +67,8 @@ $(NAME): $(OBJSPATH) $(DEPSPATH) $(OBJS)
 $(OBJSPATH) $(DEPSPATH):
 	mkdir $@
 
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(@F:.o=.d)) -I $(HEADERSPATH) -o $@ -c $<
+$(OBJSPATH)/%.o: $(SRCSPATH)/%.c
+	$(CC) $(CFLAGS) $(CMFLAGS) $(DEPSPATH)/$(@F:.o=.d) -I $(HEADERSPATH) -o $@ -c $<
 
 -include $(DEPS)
 

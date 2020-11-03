@@ -6,7 +6,7 @@
 # Name
 NAME =			#Replace this comment with the name of your project.
 
-LIB =			$(addsuffix .a, $(NAME))
+LIB =			$(NAME).a
 
 
 # Compiler
@@ -28,34 +28,34 @@ AFLAGS +=		-c
 
 
 # Header
-HEADERSFILES =	$(addsuffix .h, $(NAME))
+HEADERSFILES =	$(NAME).h
 
 HEADERSDIR =	includes
 
-HEADERSPATH =	$(addprefix ./, $(HEADERSDIR))
+HEADERSPATH =	./$(HEADERSDIR)
 
 HEADERS =		$(addprefix $(HEADERSPATH)/, $(HEADERSFILES))
 
 
+# Libs
 # Lib1
 LIB1NAME =		#Replace this comment with the name of the first lib to include in your project.
 
-LIB1FILE =		$(addsuffix .a, $(LIB1NAME))
+LIB1FILE =		$(LIB1NAME).a
 
-LIB1HEADER =	$(addsuffix .h, $(LIB1NAME))
+LIB1HEADER =	$(LIB1NAME).h
 
 LIB1DIR =		$(LIB1NAME)
 
-LIB1PATH =		$(addprefix ../, $(LIB1DIR))
+LIB1PATH =		../$(LIB1DIR)
 
-LIB1 =			$(addprefix $(LIB1PATH)/, $(LIB1FILE))
+LIB1 =			$(LIB1PATH)/, $(LIB1FILE)
 
 
 #Copy-paste Lib1 template with Lib2, Lib3, etc...
 #And add $(LIBX) to the LIBS list below for each lib added.
 
 
-# Libs
 LIBS =			$(LIB1)
 
 
@@ -64,7 +64,7 @@ SRCSFILES =		#Replace this comment with your .c sources.
 
 SRCSDIR =		src
 
-SRCSPATH =		$(addprefix ./, $(SRCSDIR))
+SRCSPATH =		./$(SRCSDIR)
 
 SRCS =			$(addprefix $(SRCSPATH)/, $(SRCSFILES))
 
@@ -74,7 +74,7 @@ OBJSFILES =		$(SRCSFILES:.c=.o)
 
 OBJSDIR =		obj
 
-OBJSPATH =		$(addprefix ./, $(OBJSDIR))
+OBJSPATH =		./$(OBJSDIR)
 
 OBJS =			$(addprefix $(OBJSPATH)/, $(OBJSFILES))
 
@@ -84,7 +84,7 @@ DEPSFILES =		$(OBJSFILES:.o=.d)
 
 DEPSDIR =		dep
 
-DEPSPATH =		$(addprefix ./, $(DEPSDIR))
+DEPSPATH =		./$(DEPSDIR)
 
 DEPS =			$(addprefix $(DEPSPATH)/, $(DEPSFILES))
 
@@ -101,8 +101,8 @@ $(OBJSPATH) $(DEPSPATH):
 $(LIBS):
 	make -C $(@D)
 
-$(OBJS): $(SRCS)
-	$(CC) $(CFLAGS) $(CMFLAGS) $(addprefix $(DEPSPATH)/, $(@F:.o=.d)) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
+$(OBJSPATH)/%.o: $(SRCSPATH)/%.c
+	$(CC) $(CFLAGS) $(CMFLAGS) $(DEPSPATH)/$(@F:.o=.d) -I $(HEADERSPATH) $(addprefix -I , $(addsuffix $(HEADERSDIR), $(dir $(LIBS)))) -o $@ -c $<
 
 -include $(DEPS)
 
